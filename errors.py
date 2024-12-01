@@ -16,22 +16,22 @@ def calculate_stats_with_delta(numbers: list[int | float], var_name: str, delta_
 
     latex_mean = (
         f"\\bar{{{var_name}}} = "
-        f"\\frac{{1}}{{n}} \\sum_{{i=1}}^{{n}} {var_name}_i = {mean:.2f}"
+        f"\\frac{{1}}{{n}} \\sum_{{i=1}}^{{n}} {var_name}_i = {mean}"
         "\n"
     )
     latex_std = (
         f"\\sigma = "
-        f"\\sqrt{{\\frac{{1}}{{n-1}} \\sum_{{i=1}}^{{n}} ({var_name}_i - \\bar{{{var_name}}})^2}} = {std_dev:.2f}"
+        f"\\sqrt{{\\frac{{1}}{{n-1}} \\sum_{{i=1}}^{{n}} ({var_name}_i - \\bar{{{var_name}}})^2}} = {std_dev}"
         "\n"
     )
     latex_delta_s = (
         f"\\Delta {var_name}_s = \\frac{{\\sigma}}{{\\sqrt{{n}}}} = "
-        f"\\frac{{{std_dev:.2f}}}{{\\sqrt{{{n}}}}} = {delta_s:.2f}"
+        f"\\frac{{{std_dev}}}{{\\sqrt{{{n}}}}} = {delta_s}"
         "\n"
     )
     latex_delta = (
         f"\\Delta {var_name} = \\sqrt{{\\Delta {var_name}_m^{{2}} + \\Delta {var_name}_S^{{2}}}} = "
-        f"\\sqrt{{{delta_m:.2f}^{{2}} + {delta_s:.2f}^{{2}}}} = {delta:.2f}"
+        f"\\sqrt{{{delta_m}^{{2}} + {delta_s}^{{2}}}} = {delta}"
         "\n"
     )
     latex = latex_mean + latex_std + latex_delta_s + latex_delta
@@ -57,7 +57,7 @@ def calculate_error_with_propagation(formula: str, calculated_variable: str, var
 
         latex_terms.append(
             r"\Delta " + calculated_variable + r"_{" + f"{var}" + r"} = \frac{{\partial "+ calculated_variable +"}}{{\partial " + f"{var}" + r"}} \Delta " + f"{var} = " +
-            f"({sp.latex(partial_derivative)}) \\cdot {error:.2f} = {delta_term:.2f}"
+            f"({sp.latex(partial_derivative)}) \\cdot {error} = {delta_term}"
         )
 
     delta_result = sum(error_terms) ** 0.5
@@ -65,9 +65,9 @@ def calculate_error_with_propagation(formula: str, calculated_variable: str, var
     error_sum_latex = " + ".join(
         [r"\Delta " + calculated_variable + "_{" + f"{var}" + r"}^{2}" for var in errors.keys()])
     latex = (
-            calculated_variable +r" = " + f"{sp.latex(formula_expr)} = {formula_value:.2f}\n\n" +
+            calculated_variable +r" = " + f"{sp.latex(formula_expr)} = {formula_value}\n\n" +
             "\n\n".join(latex_terms) +
-            r"\n\n\Delta " + calculated_variable + " = \sqrt{" + error_sum_latex + "} = " + f"{delta_result:.2f}"
+            r"\n\n\Delta " + calculated_variable + " = \sqrt{" + error_sum_latex + "} = " + f"{delta_result}"
     )
 
     return float(formula_value), float(delta_result), latex
