@@ -67,6 +67,7 @@ class ErrorCalculationApp:
             result = errors.calculate_stats_with_delta(numbers, var_name, delta_m)
             self.stats_result_text.delete(1.0, tk.END)
             self.stats_result_text.insert(tk.END, result)
+            self.stats_result_text.config(state=tk.NORMAL)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
@@ -81,6 +82,7 @@ class ErrorCalculationApp:
             value, delta, result = errors.calculate_error_with_propagation(formula, calculated_variable, variables, errors_dict)
             self.error_result_text.delete(1.0, tk.END)
             self.error_result_text.insert(tk.END, result)
+            self.error_result_text.config(state=tk.NORMAL)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 

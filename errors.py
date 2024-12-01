@@ -30,6 +30,11 @@ def calculate_stats_with_delta(numbers: list[int | float], var_name: str, delta_
     delta_s = format_float(std_dev / np.sqrt(n))
 
     delta = format_float(np.sqrt(delta_m ** 2 + delta_s ** 2))
+    latex_numbers = ""
+    for i in range(len(numbers)):
+        latex_numbers += (
+            f"\\{var_name}_{i} = {numbers[i]} "
+        )
 
     latex_mean = (
         f"\\bar{{{var_name}}} = "
@@ -51,8 +56,7 @@ def calculate_stats_with_delta(numbers: list[int | float], var_name: str, delta_
         f"\\sqrt{{{delta_m}^{{2}} + {delta_s}^{{2}}}} = {delta}"
         "\n"
     )
-    latex = latex_mean + latex_std + latex_delta_s + latex_delta
-
+    latex = latex_numbers +  latex_mean + latex_std + latex_delta_s + latex_delta
     return latex
 
 
