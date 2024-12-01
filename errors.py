@@ -1,18 +1,35 @@
 import numpy as np
 import sympy as sp
 
+def get_distance_to_zero(num: float) -> int:
+    if num == 0:
+        return 0
+    if num > 1:
+        return 0
+    distance = 0
+    while abs(num) < 1:
+        num *= 10
+        distance += 1
+    return distance
+
+def format_float(num: float | np.floating, significant_digits: int = 1) -> float:
+    int_part = int(num)
+    float_part = num - int_part
+    return int_part + round(float_part, get_distance_to_zero(float_part) + significant_digits)
+
+
 
 def calculate_stats_with_delta(numbers: list[int | float], var_name: str, delta_m: int | float) -> str:
     numbers = np.array(numbers)
     n = len(numbers)
 
-    mean = np.mean(numbers)
+    mean = format_float(np.mean(numbers))
 
-    std_dev = np.sqrt(np.sum((numbers - mean) ** 2) / (n - 1))
+    std_dev = format_float(np.sqrt(np.sum((numbers - mean) ** 2) / (n - 1)))
 
-    delta_s = std_dev / np.sqrt(n)
+    delta_s = format_float(std_dev / np.sqrt(n))
 
-    delta = np.sqrt(delta_m ** 2 + delta_s ** 2)
+    delta = format_float(np.sqrt(delta_m ** 2 + delta_s ** 2))
 
     latex_mean = (
         f"\\bar{{{var_name}}} = "
@@ -45,22 +62,23 @@ def calculate_error_with_propagation(formula: str, calculated_variable: str, var
 
     formula_expr = sp.sympify(formula)
 
-    formula_value = formula_expr.evalf(subs=variables)
+    formula_value = format_float(formula_expr.evalf(subs=variables))
 
     error_terms = []
     latex_terms = []
     for var, error in errors.items():
+        error = format_float(error)
         partial_derivative = sp.diff(formula_expr, symbols[var])
         partial_value = partial_derivative.evalf(subs=variables)
-        delta_term = partial_value * error
-        error_terms.append(delta_term ** 2)
+        delta_term = format_float(partial_value * error)
+        error_terms.append(format_float(delta_term ** 2))
 
         latex_terms.append(
             r"\Delta " + calculated_variable + r"_{" + f"{var}" + r"} = \frac{{\partial "+ calculated_variable +"}}{{\partial " + f"{var}" + r"}} \Delta " + f"{var} = " +
             f"({sp.latex(partial_derivative)}) \\cdot {error} = {delta_term}"
         )
 
-    delta_result = sum(error_terms) ** 0.5
+    delta_result = format_float(sum(error_terms) ** 0.5)
 
     error_sum_latex = " + ".join(
         [r"\Delta " + calculated_variable + "_{" + f"{var}" + r"}^{2}" for var in errors.keys()])
