@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import errors
 
+
 class ErrorCalculationApp:
     def __init__(self, root):
         self.root = root
@@ -67,6 +68,34 @@ class ErrorCalculationApp:
         self.error_result_text = scrolledtext.ScrolledText(self.error_frame, height=10, width=60)
         self.error_result_text.grid(row=6, column=0, columnspan=2, pady=5)
 
+        # New widgets for n-sigma calculation
+        tk.Label(self.error_frame, text="Theoretical Result:").grid(row=7, column=0, sticky="w")
+        self.theoretical_result_entry = tk.Entry(self.error_frame, width=50)
+        self.theoretical_result_entry.grid(row=7, column=1)
+
+        tk.Label(self.error_frame, text="Experiment Result:").grid(row=8, column=0, sticky="w")
+        self.experiment_result_entry = tk.Entry(self.error_frame, width=50)
+        self.experiment_result_entry.grid(row=8, column=1)
+
+        tk.Label(self.error_frame, text="Theoretical Error:").grid(row=9, column=0, sticky="w")
+        self.theoretical_error_entry = tk.Entry(self.error_frame, width=50)
+        self.theoretical_error_entry.grid(row=9, column=1)
+
+        tk.Label(self.error_frame, text="Experiment Error:").grid(row=10, column=0, sticky="w")
+        self.experiment_error_entry = tk.Entry(self.error_frame, width=50)
+        self.experiment_error_entry.grid(row=10, column=1)
+
+        tk.Label(self.error_frame, text="Calculated Variable:").grid(row=11, column=0, sticky="w")
+        self.n_sigma_calculated_variable_entry = tk.Entry(self.error_frame, width=50)
+        self.n_sigma_calculated_variable_entry.grid(row=11, column=1)
+
+        self.n_sigma_calculate_button = tk.Button(self.error_frame, text="Calculate N-Sigma",
+                                                  command=self.calculate_n_sigma_result)
+        self.n_sigma_calculate_button.grid(row=12, column=1, pady=5)
+
+        self.n_sigma_result_text = scrolledtext.ScrolledText(self.error_frame, height=10, width=60)
+        self.n_sigma_result_text.grid(row=13, column=0, columnspan=2, pady=5)
+
     def calculate_stats(self):
         try:
             numbers = list(map(float, self.stats_numbers_entry.get().split(',')))
@@ -89,10 +118,27 @@ class ErrorCalculationApp:
                          for var in self.variables_entry.get().split(',')}
             errors_dict = {err.split('=')[0].strip(): float(err.split('=')[1].strip())
                            for err in self.errors_entry.get().split(',')}
-            value, delta, result = errors.calculate_error_with_propagation(formula, calculated_variable, variables, errors_dict, unit)
+            value, delta, result = errors.calculate_error_with_propagation(formula, calculated_variable, variables,
+                                                                           errors_dict, unit)
             self.error_result_text.delete(1.0, tk.END)
             self.error_result_text.insert(tk.END, result)
             self.error_result_text.config(state=tk.NORMAL)
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
+    def calculate_n_sigma_result(self):
+        try:
+            theoretical_result = float(self.theoretical_result_entry.get())
+            experiment_result = float(self.experiment_result_entry.get())
+            theoretical_error = float(self.theoretical_error_entry.get())
+            experiment_error = float(self.experiment_error_entry.get())
+            calculated_variable = self.n_sigma_calculated_variable_entry.get()
+            delta_k, n_sigma, latex = errors.calculate_n_sigma(
+                theoretical_result, experiment_result, theoretical_error, experiment_error, calculated_variable)
+
+            self.n_sigma_result_text.delete(1.0, tk.END)
+            self.n_sigma_result_text.insert(tk.END, latex)
+            self.n_sigma_result_text.config(state=tk.NORMAL)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
