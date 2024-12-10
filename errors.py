@@ -1,6 +1,8 @@
 import numpy as np
 import sympy as sp
 
+from utils import convert_unit_to_latex, format_float
+
 
 class UnKnownOperator(Exception):
     pass
@@ -16,29 +18,6 @@ def get_distance_to_zero(num: float) -> int:
         num *= 10
         distance += 1
     return distance
-
-
-def format_float(num: float | np.floating, significant_digits: int = 1) -> float:
-    int_part = int(num)
-    float_part = num - int_part
-    return int_part + round(float_part, get_distance_to_zero(float_part) + significant_digits)
-
-
-def convert_unit_to_latex(unit: str) -> str:
-    known_operators = ["/", "*", "^"]
-    unit = unit.replace(" ", "")
-    latex = ""
-    for i, character in enumerate(unit):
-        if character == "/":
-            return f"\\frac{{{unit[:i]}}}{{{convert_unit_to_latex(unit[i + 1:])}}}"
-        elif character == "*":
-            return f"{unit[:i]}\cdot{convert_unit_to_latex(unit[i + 1:])}"
-        elif character == "^":
-            return f"{unit[:i]} ^ {{{unit[i + 1]}}} {convert_unit_to_latex(unit[i + 2:])}"
-        elif not character.isalpha():
-            raise UnKnownOperator(
-                f"You passed unknown operator{character}, please make sure it is one of these {known_operators}")
-    return unit
 
 
 def calculate_stats_with_delta(numbers: list[int | float], var_name: str, delta_m: int | float, unit: str) -> str:
@@ -57,8 +36,10 @@ def calculate_stats_with_delta(numbers: list[int | float], var_name: str, delta_
     latex_numbers = ""
     for i in range(len(numbers)):
         latex_numbers += (
-            f"\\{var_name}_{i} = {numbers[i]}[{unit}] "
+            f"{var_name}_{i} = {numbers[i]}[{unit}] "
         )
+        if i < len(numbers) - 1:
+            latex_numbers += ", "
     latex_numbers += "\n"
 
     latex_mean = (
@@ -114,7 +95,7 @@ def calculate_error_with_propagation(formula: str,
         error_terms.append(format_float(delta_term ** 2))
 
         latex_terms.append(
-            r"\Delta " + calculated_variable + r"_{" + f"{var}" + r"} = \frac{{\partial " + calculated_variable + "}}{{\partial " + f"{var}" + r"}} \Delta " + f"{calculated_variable}_" + f"{var} = " +
+            r"\Delta " + calculated_variable + r"_{" + f"{var}" + r"} = \frac{{\partial " + calculated_variable + "}}{{\partial " + f"{var}" + r"}} \Delta " + f"{var}" + f" = " +
             f"({sp.latex(partial_derivative)}) \\cdot {error}"
             "\n"
             f"\\Delta {calculated_variable}_{{{var}}} = {delta_term}[{unit}]"
@@ -142,11 +123,12 @@ def calculate_n_sigma(theoretical_result: float | int,
                       experiment_error: float | int,
                       calculated_variable: str) -> tuple[float, float, str]:
     delta_k = format_float(abs(experiment_result - theoretical_result) / theoretical_result)
-    n_sigma = format_float(abs(theoretical_result - experiment_result) / ((theoretical_error ** 2 + experiment_error ** 2) ** 0.5))
+    n_sigma = format_float(
+        abs(theoretical_result - experiment_result) / ((theoretical_error ** 2 + experiment_error ** 2) ** 0.5))
     latex_delta_k = (
         f"\\Delta K = \\frac{{\\left|K_{{\\text{{exp}}}} - K_{{\\text{{th}}}}\\right|}}{{K_{{\\text{{th}}}}}}"
         "\n\n"
-        f"\\Delta K = \\frac{{\\left|{experiment_result} - {theoretical_result}\\right|}}{{{theoretical_result}}}"
+        f"\ \Delta K = \\frac{{\\left|{experiment_result} - {theoretical_result}\\right|}}{{{theoretical_result}}}"
         "\n\n"
         f"\\Delta K = {delta_k}"
         "\n\n"
@@ -160,6 +142,3 @@ def calculate_n_sigma(theoretical_result: float | int,
     )
     latex = latex_delta_k + latex_n_sigma
     return delta_k, n_sigma, latex
-
-
-print(calculate_n_sigma(1.0268,1.0053,0.0011,0.009,"T"))

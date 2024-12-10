@@ -1,6 +1,9 @@
+import threading
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
+
 import errors
+from plot import plot_with_error_bars
 
 
 class ErrorCalculationApp:
@@ -17,6 +20,11 @@ class ErrorCalculationApp:
         self.error_frame.pack(padx=10, pady=5, fill="x")
 
         self.create_error_widgets()
+
+        self.plot_frame = tk.LabelFrame(self.root, text="Plot Data with Error Bars")
+        self.plot_frame.pack(padx=10, pady=5, fill="x")
+
+        self.create_plot_widgets()
 
     def create_stats_widgets(self):
         tk.Label(self.stats_frame, text="Numbers (comma-separated):").grid(row=0, column=0, sticky="w")
@@ -141,6 +149,50 @@ class ErrorCalculationApp:
             self.n_sigma_result_text.config(state=tk.NORMAL)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
+
+    def create_plot_widgets(self):
+        tk.Label(self.plot_frame, text="X Values (comma-separated):").grid(row=0, column=0, sticky="w")
+        self.x_values_entry = tk.Entry(self.plot_frame, width=50)
+        self.x_values_entry.grid(row=0, column=1)
+
+        tk.Label(self.plot_frame, text="Y Values (comma-separated):").grid(row=1, column=0, sticky="w")
+        self.y_values_entry = tk.Entry(self.plot_frame, width=50)
+        self.y_values_entry.grid(row=1, column=1)
+
+        tk.Label(self.plot_frame, text="X Errors (comma-separated):").grid(row=2, column=0, sticky="w")
+        self.x_errors_entry = tk.Entry(self.plot_frame, width=50)
+        self.x_errors_entry.grid(row=2, column=1)
+
+        tk.Label(self.plot_frame, text="Y Errors (comma-separated):").grid(row=3, column=0, sticky="w")
+        self.y_errors_entry = tk.Entry(self.plot_frame, width=50)
+        self.y_errors_entry.grid(row=3, column=1)
+
+        tk.Label(self.plot_frame, text="Tick Amount:").grid(row=4, column=0, sticky="w")
+        self.tick_amount_entry = tk.Entry(self.plot_frame, width=50)
+        self.tick_amount_entry.grid(row=4, column=1)
+
+        self.plot_button = tk.Button(self.plot_frame, text="Plot Data", command=self.start_plot_thread)
+        self.plot_button.grid(row=5, column=1, pady=5)
+
+    def start_plot_thread(self):
+        threading.Thread(target=self.plot_data, daemon=True).start()
+
+    def plot_data(self):
+        try:
+            x = list(map(float, self.x_values_entry.get().split(',')))
+            y = list(map(float, self.y_values_entry.get().split(',')))
+            x_errors = list(map(float, self.x_errors_entry.get().split(',')))
+            y_errors = list(map(float, self.y_errors_entry.get().split(',')))
+            tick_amount = int(self.tick_amount_entry.get())
+
+            plot_with_error_bars(
+                x, y, x_errors, y_errors,
+                x_label="X-axis", y_label="Y-axis",
+                plot_title="Error Bar Plot",
+                amount_of_ticks=tick_amount
+            )
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while plotting: {e}")
 
 
 if __name__ == "__main__":
