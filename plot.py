@@ -15,6 +15,11 @@ def plot_with_error_bars(x: list[int | float],
                          y_unit: str = "",
                          amount_of_ticks: int = 10,
                          plot_title: str = "Plot with Error Bars"):
+    plt.rcParams.update({
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+        'legend.fontsize': 15
+    })
     x = np.array(x)
     y = np.array(y)
     x_unit = convert_unit_to_latex(x_unit)
@@ -27,13 +32,14 @@ def plot_with_error_bars(x: list[int | float],
     plt.plot(x, trend_line, color='red', label=f'trend line (y = {m:.2f}x + {b:.2f})')
 
     plt.errorbar(x, y, xerr=x_errors, yerr=y_errors, fmt='o', capsize=5, label="Data with errors")
-    plt.title(f"${plot_title}$", fontsize=14)
-    plt.xlabel(x_label_full, fontsize=12)
-    plt.ylabel(y_label_full, fontsize=12)
+    plt.title(f"${plot_title}$", fontsize=30)
+    plt.xlabel(x_label_full, fontsize=20)
+    plt.ylabel(y_label_full, fontsize=20)
     plt.legend()
     plt.grid()
     plt.locator_params(axis="x", nbins=len(x) * amount_of_ticks)
     plt.locator_params(axis="y", nbins=len(y) * amount_of_ticks)
     plt.show()
+
 
 
