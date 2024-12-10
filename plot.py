@@ -37,5 +37,3 @@ def plot_with_error_bars(x: list[int | float],
     plt.show()
 
 
-
-

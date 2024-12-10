@@ -1,4 +1,3 @@
-import threading
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 
@@ -76,7 +75,6 @@ class ErrorCalculationApp:
         self.error_result_text = scrolledtext.ScrolledText(self.error_frame, height=10, width=60)
         self.error_result_text.grid(row=6, column=0, columnspan=2, pady=5)
 
-        # New widgets for n-sigma calculation
         tk.Label(self.error_frame, text="Theoretical Result:").grid(row=7, column=0, sticky="w")
         self.theoretical_result_entry = tk.Entry(self.error_frame, width=50)
         self.theoretical_result_entry.grid(row=7, column=1)
@@ -171,11 +169,8 @@ class ErrorCalculationApp:
         self.tick_amount_entry = tk.Entry(self.plot_frame, width=50)
         self.tick_amount_entry.grid(row=4, column=1)
 
-        self.plot_button = tk.Button(self.plot_frame, text="Plot Data", command=self.start_plot_thread)
+        self.plot_button = tk.Button(self.plot_frame, text="Plot Data", command=self.plot_data)
         self.plot_button.grid(row=5, column=1, pady=5)
-
-    def start_plot_thread(self):
-        threading.Thread(target=self.plot_data, daemon=True).start()
 
     def plot_data(self):
         try:
@@ -185,6 +180,12 @@ class ErrorCalculationApp:
             y_errors = list(map(float, self.y_errors_entry.get().split(',')))
             tick_amount = int(self.tick_amount_entry.get())
 
+            self.root.after(0, lambda: self.execute_plot(x, y, x_errors, y_errors, tick_amount))
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while plotting: {e}")
+
+    def execute_plot(self, x, y, x_errors, y_errors, tick_amount):
+        try:
             plot_with_error_bars(
                 x, y, x_errors, y_errors,
                 x_label="X-axis", y_label="Y-axis",
