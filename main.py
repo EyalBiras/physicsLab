@@ -22,6 +22,19 @@ class ErrorCalculationApp:
         self.file_name_entry = tk.Entry(self.file_frame, width=50, state=tk.DISABLED)
         self.file_name_entry.grid(row=1, column=1, padx=5, pady=2)
 
+        tk.Label(self.file_frame, text="Prefix and Endfix Settings", font=("Arial", 12, "bold")).grid(row=0, column=0,
+                                                                                                      columnspan=2,
+                                                                                                      sticky="w",
+                                                                                                      pady=(5, 10))
+
+        tk.Label(self.file_frame,
+                 text="(Not mandatory; may be useful for LaTeX extensions requiring $$ at start and end)").grid(row=1,
+                                                                                                                column=0,
+                                                                                                                columnspan=2,
+                                                                                                                sticky="w",
+                                                                                                                pady=(
+                                                                                                                0, 10))
+
         tk.Label(self.file_frame, text="Prefix:").grid(row=2, column=0, sticky="w")
         self.file_prefix_entry = tk.Entry(self.file_frame, width=50, state=tk.DISABLED)
         self.file_prefix_entry.grid(row=2, column=1, padx=5, pady=2)
