@@ -108,8 +108,8 @@ def calculate_error_with_propagation(formula: str,
         [r"\Delta " + calculated_variable + "_{" + f"{var}" + r"}^{2}" for var in errors.keys()])
     latex = (
             "\\boxed{" + calculated_variable + r" = " + f"{sp.latex(formula_expr)} = {formula_value}[{unit}]}}\n\n" +
-            "\n\n".join(latex_terms) +
-            r"\n\n\Delta " + calculated_variable + " = \sqrt{" + error_sum_latex + "}"
+            "\n".join(latex_terms) +
+            r"\Delta " + calculated_variable + " = \sqrt{" + error_sum_latex + "}"
                                                                                    "\n"
                                                                                    f"\\boxed{{\Delta {calculated_variable} = {delta_result}[{unit}]}}"
                                                                                    "\n"
