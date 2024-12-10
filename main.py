@@ -11,7 +11,6 @@ class ErrorCalculationApp:
 
         self.file_frame = tk.LabelFrame(self.root, text="File Options")
         self.file_frame.pack(padx=10, pady=5, fill="x")
-
         self.create_file_var = tk.BooleanVar()
         self.create_file_checkbox = tk.Checkbutton(
             self.file_frame, text="Create File", variable=self.create_file_var, command=self.toggle_file_options
@@ -21,27 +20,15 @@ class ErrorCalculationApp:
         tk.Label(self.file_frame, text="File Name:").grid(row=1, column=0, sticky="w")
         self.file_name_entry = tk.Entry(self.file_frame, width=50, state=tk.DISABLED)
         self.file_name_entry.grid(row=1, column=1, padx=5, pady=2)
+        tk.Label(self.file_frame, text="Prefix and endfix aren't mandatory\n they may found useful with latex extantions in docs which require $$ at the end and start").grid(row=2, column=0)
 
-        tk.Label(self.file_frame, text="Prefix and Endfix Settings", font=("Arial", 12, "bold")).grid(row=0, column=0,
-                                                                                                      columnspan=2,
-                                                                                                      sticky="w",
-                                                                                                      pady=(5, 10))
-
-        tk.Label(self.file_frame,
-                 text="(Not mandatory; may be useful for LaTeX extensions requiring $$ at start and end)").grid(row=1,
-                                                                                                                column=0,
-                                                                                                                columnspan=2,
-                                                                                                                sticky="w",
-                                                                                                                pady=(
-                                                                                                                0, 10))
-
-        tk.Label(self.file_frame, text="Prefix:").grid(row=2, column=0, sticky="w")
+        tk.Label(self.file_frame, text="Prefix:").grid(row=3, column=0, sticky="w")
         self.file_prefix_entry = tk.Entry(self.file_frame, width=50, state=tk.DISABLED)
-        self.file_prefix_entry.grid(row=2, column=1, padx=5, pady=2)
+        self.file_prefix_entry.grid(row=3, column=1, padx=5, pady=2)
 
-        tk.Label(self.file_frame, text="Endfix:").grid(row=3, column=0, sticky="w")
+        tk.Label(self.file_frame, text="Endfix:").grid(row=4, column=0, sticky="w")
         self.file_endfix_entry = tk.Entry(self.file_frame, width=50, state=tk.DISABLED)
-        self.file_endfix_entry.grid(row=3, column=1, padx=5, pady=2)
+        self.file_endfix_entry.grid(row=4, column=1, padx=5, pady=2)
 
         self.stats_frame = tk.LabelFrame(self.root, text="Calculate Stats with Delta")
         self.stats_frame.pack(padx=10, pady=5, fill="x")

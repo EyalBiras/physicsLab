@@ -22,7 +22,6 @@ def format_float(num: float | np.floating, significant_digits: int = 1) -> float
     float_part = num - int_part
     return int_part + round(float_part, get_distance_to_zero(float_part) + significant_digits)
 
-
 def convert_mul_div_latex(unit: str) -> str:
     known_operators = ["/", "*", ]
     unit = unit.replace(" ", "")
@@ -58,4 +57,3 @@ def convert_unit_to_latex(unit: str) -> str:
     return unit
 
 
-print(convert_unit_to_latex("m^2/x^2"))
